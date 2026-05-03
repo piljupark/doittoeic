@@ -1,0 +1,1265 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>DO IT TOEIC</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100svh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0b1220;
+      color: #111827;
+    }
+
+    button,
+    textarea,
+    audio {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .page {
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      background: #eef2f7;
+    }
+
+    .examHeader {
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 28px;
+      background: #ffffff;
+      border-bottom: 1px solid #d9dee7;
+    }
+
+    .brand {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #0f172a;
+    }
+
+    .brandSub {
+      margin-top: 2px;
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    .headerRight {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .miniButton {
+      min-height: 36px;
+      padding: 8px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      background: #f8fafc;
+      color: #334155;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .examMain {
+      width: min(920px, 100%);
+      margin: 0 auto;
+      padding: 28px 18px 120px;
+      flex: 1;
+    }
+
+    .examCard {
+      background: #ffffff;
+      border: 1px solid #d9dee7;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+    }
+
+    .examInfo {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+      padding: 18px 24px;
+      border-bottom: 1px solid #e2e8f0;
+      background: #f8fafc;
+    }
+
+    .questionCounter {
+      font-size: 13px;
+      font-weight: 800;
+      color: #2563eb;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .questionType {
+      margin-top: 5px;
+      font-size: 22px;
+      font-weight: 850;
+      color: #0f172a;
+      letter-spacing: -0.04em;
+    }
+
+    .questionFocus {
+      margin-top: 5px;
+      font-size: 13px;
+      color: #64748b;
+    }
+
+    .progressText {
+      min-width: 84px;
+      text-align: right;
+      font-size: 13px;
+      color: #64748b;
+      font-weight: 700;
+    }
+
+    .progressBar {
+      grid-column: 1 / -1;
+      height: 7px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progressBar span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: #2563eb;
+      transition: width 0.2s ease;
+    }
+
+    .timerArea {
+      padding: 34px 24px 28px;
+      text-align: center;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .timerLabel {
+      font-size: 15px;
+      font-weight: 800;
+      color: #475569;
+    }
+
+    .timer {
+      margin-top: 8px;
+      font-size: clamp(82px, 16vw, 140px);
+      line-height: 0.95;
+      font-weight: 900;
+      color: #0f172a;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.08em;
+    }
+
+    .timer.prep {
+      color: #2563eb;
+    }
+
+    .timer.answer {
+      color: #dc2626;
+    }
+
+    .timer.done {
+      color: #16a34a;
+    }
+
+    .recordStatus {
+      margin-top: 16px;
+      min-height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: #64748b;
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #94a3b8;
+    }
+
+    .dot.live {
+      background: #dc2626;
+      box-shadow: 0 0 0 7px rgba(220, 38, 38, 0.14);
+    }
+
+    .promptArea {
+      padding: 28px 30px 34px;
+    }
+
+    .promptLabel {
+      margin-bottom: 14px;
+      font-size: 13px;
+      font-weight: 850;
+      color: #475569;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .sceneBox {
+      display: none;
+      margin-bottom: 18px;
+      padding: 16px;
+      border-radius: 14px;
+      border: 1px dashed #94a3b8;
+      background: #f8fafc;
+      color: #334155;
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    .sceneBox.show {
+      display: block;
+    }
+
+    .promptText {
+      min-height: 210px;
+      padding: 24px;
+      border: 1px solid #dbe3ef;
+      border-radius: 16px;
+      background: #ffffff;
+      color: #111827;
+      white-space: pre-wrap;
+      line-height: 1.75;
+      font-size: 22px;
+      word-break: keep-all;
+    }
+
+    .actionDock {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 50;
+      background: rgba(255, 255, 255, 0.96);
+      border-top: 1px solid #d9dee7;
+      backdrop-filter: blur(14px);
+    }
+
+    .actionInner {
+      width: min(920px, 100%);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 160px;
+      gap: 10px;
+      padding: 12px 18px calc(12px + env(safe-area-inset-bottom));
+    }
+
+    .primaryAction {
+      min-height: 58px;
+      border: 0;
+      border-radius: 14px;
+      background: #2563eb;
+      color: #ffffff;
+      font-size: 18px;
+      font-weight: 850;
+    }
+
+    .primaryAction.answer {
+      background: #dc2626;
+    }
+
+    .primaryAction.done {
+      background: #16a34a;
+    }
+
+    .primaryAction:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .secondaryAction {
+      min-height: 58px;
+      border: 1px solid #cbd5e1;
+      border-radius: 14px;
+      background: #f8fafc;
+      color: #334155;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .reviewArea {
+      margin-top: 18px;
+      background: #ffffff;
+      border: 1px solid #d9dee7;
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    .reviewArea summary {
+      list-style: none;
+      padding: 18px 22px;
+      font-weight: 850;
+      color: #0f172a;
+      cursor: pointer;
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .reviewArea summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .reviewBody {
+      padding: 20px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .reviewGrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .fieldLabel {
+      margin-bottom: 8px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #475569;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 135px;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid #cbd5e1;
+      resize: vertical;
+      line-height: 1.55;
+      font-size: 16px;
+      color: #111827;
+      background: #ffffff;
+    }
+
+    audio {
+      width: 100%;
+    }
+
+    .downloadLink {
+      display: none;
+      width: fit-content;
+      color: #2563eb;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .downloadLink.show {
+      display: inline-block;
+    }
+
+    .resultBox {
+      display: none;
+      margin-top: 18px;
+      padding: 24px;
+      background: #ffffff;
+      border: 1px solid #d9dee7;
+      border-radius: 18px;
+    }
+
+    .resultBox.show {
+      display: block;
+    }
+
+    .scoreBig {
+      font-size: 56px;
+      font-weight: 900;
+      color: #16a34a;
+      letter-spacing: -0.06em;
+    }
+
+    .levelText {
+      margin-top: 6px;
+      color: #334155;
+      font-weight: 800;
+    }
+
+    .breakdown {
+      display: grid;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .scoreRow {
+      display: grid;
+      grid-template-columns: 90px 1fr 52px;
+      gap: 10px;
+      align-items: center;
+      font-size: 14px;
+      color: #475569;
+    }
+
+    .miniBar {
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .miniBar span {
+      display: block;
+      height: 100%;
+      background: #2563eb;
+    }
+
+    .feedbackList {
+      margin: 18px 0 0;
+      padding-left: 20px;
+      color: #334155;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 720px) {
+      .examHeader {
+        height: auto;
+        padding: 14px 16px;
+      }
+
+      .brand {
+        font-size: 16px;
+      }
+
+      .brandSub {
+        font-size: 11px;
+      }
+
+      .miniButton {
+        min-height: 34px;
+        padding: 7px 10px;
+        font-size: 12px;
+      }
+
+      .examMain {
+        padding: 14px 10px 116px;
+      }
+
+      .examCard {
+        border-radius: 14px;
+      }
+
+      .examInfo {
+        padding: 15px;
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .progressText {
+        text-align: left;
+      }
+
+      .questionType {
+        font-size: 20px;
+      }
+
+      .timerArea {
+        padding: 28px 16px 24px;
+      }
+
+      .timer {
+        font-size: clamp(84px, 27vw, 128px);
+      }
+
+      .promptArea {
+        padding: 18px 14px 22px;
+      }
+
+      .promptText {
+        min-height: 260px;
+        padding: 18px;
+        font-size: 18px;
+        line-height: 1.72;
+      }
+
+      .sceneBox {
+        font-size: 14px;
+      }
+
+      .actionInner {
+        grid-template-columns: 1fr;
+        padding: 10px 10px calc(10px + env(safe-area-inset-bottom));
+      }
+
+      .primaryAction,
+      .secondaryAction {
+        min-height: 54px;
+      }
+
+      .secondaryAction {
+        min-height: 46px;
+      }
+
+      .reviewGrid {
+        grid-template-columns: 1fr;
+      }
+
+      .reviewBody {
+        padding: 14px;
+      }
+
+      .resultBox {
+        padding: 18px;
+      }
+
+      .scoreBig {
+        font-size: 44px;
+      }
+
+      .scoreRow {
+        grid-template-columns: 76px 1fr 48px;
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <header class="examHeader">
+      <div>
+        <div class="brand">DO IT TOEIC</div>
+        <div class="brandSub">TOEIC Speaking Practice</div>
+      </div>
+
+      <div class="headerRight">
+        <button id="newSetBtn" class="miniButton">새 세트</button>
+      </div>
+    </header>
+
+    <main class="examMain">
+      <section class="examCard">
+        <div class="examInfo">
+          <div>
+            <div class="questionCounter" id="questionCounter">Question 1 / 11</div>
+            <div class="questionType" id="questionTitle">Question Title</div>
+            <div class="questionFocus" id="questionFocus">Focus</div>
+          </div>
+
+          <div class="progressText" id="progressText">0 / 0 완료</div>
+
+          <div class="progressBar">
+            <span id="progressBar"></span>
+          </div>
+        </div>
+
+        <div class="timerArea">
+          <div class="timerLabel" id="timerLabel">대기</div>
+          <div class="timer" id="timer">00</div>
+
+          <div class="recordStatus" id="recordStatus">
+            <span class="dot"></span>
+            <span>대기 중</span>
+          </div>
+        </div>
+
+        <div class="promptArea">
+          <div class="promptLabel" id="questionType">Prompt</div>
+          <div class="sceneBox" id="sceneBox"></div>
+          <div class="promptText" id="promptText"></div>
+        </div>
+      </section>
+
+      <details class="reviewArea" id="reviewArea">
+        <summary>답변 기록 / 채점 결과 확인</summary>
+
+        <div class="reviewBody">
+          <div>
+            <div class="fieldLabel">녹음 재생</div>
+            <audio id="audio" controls></audio>
+            <a id="downloadLink" class="downloadLink" href="#" download>녹음 파일 다운로드</a>
+          </div>
+
+          <div class="reviewGrid">
+            <div>
+              <div class="fieldLabel">음성인식 답변</div>
+              <textarea id="transcript" placeholder="답변 타이머가 끝나면 인식된 답변이 여기에 남습니다. 필요하면 직접 수정 후 채점할 수 있습니다."></textarea>
+            </div>
+
+            <div>
+              <div class="fieldLabel">내 메모</div>
+              <textarea id="memo" placeholder="다시 말할 표현, 실수, 개선점을 적어보세요."></textarea>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <section class="resultBox" id="resultBox">
+        <div class="scoreBig" id="totalScore">0 / 200</div>
+        <div class="levelText" id="levelText"></div>
+
+        <div class="breakdown" id="breakdown"></div>
+        <ul class="feedbackList" id="feedbackList"></ul>
+      </section>
+    </main>
+
+    <div class="actionDock">
+      <div class="actionInner">
+        <button id="primaryAction" class="primaryAction">준비 시작</button>
+        <button id="nextBtn" class="secondaryAction">다음 문항</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./data.js"></script>
+
+  <script>
+    let testQuestions = generateRandomTest();
+
+    let current = 0;
+    let completed = JSON.parse(localStorage.getItem("toeic_completed") || "{}");
+
+    let state = "ready";
+    let timerId = null;
+    let mediaRecorder = null;
+    let recognition = null;
+    let currentStream = null;
+    let chunks = [];
+    let audioUrl = null;
+    let finalTranscript = "";
+    let recordStartTime = null;
+    let recordDuration = 0;
+
+    const $ = id => document.getElementById(id);
+
+    const questionCounter = $("questionCounter");
+    const questionTitle = $("questionTitle");
+    const questionFocus = $("questionFocus");
+    const questionType = $("questionType");
+    const progressText = $("progressText");
+    const progressBar = $("progressBar");
+    const timerLabel = $("timerLabel");
+    const timer = $("timer");
+    const recordStatus = $("recordStatus");
+    const sceneBox = $("sceneBox");
+    const promptText = $("promptText");
+
+    const primaryAction = $("primaryAction");
+    const nextBtn = $("nextBtn");
+    const newSetBtn = $("newSetBtn");
+
+    const reviewArea = $("reviewArea");
+    const audio = $("audio");
+    const downloadLink = $("downloadLink");
+    const transcript = $("transcript");
+    const memo = $("memo");
+
+    const resultBox = $("resultBox");
+    const totalScore = $("totalScore");
+    const levelText = $("levelText");
+    const breakdown = $("breakdown");
+    const feedbackList = $("feedbackList");
+
+    function q() {
+      return testQuestions[current];
+    }
+
+    function formatTime(sec) {
+      return String(Math.max(0, sec)).padStart(2, "0");
+    }
+
+    function setRecordStatus(text, live = false) {
+      recordStatus.innerHTML = `
+        <span class="dot ${live ? "live" : ""}"></span>
+        <span>${text}</span>
+      `;
+    }
+
+    function saveMemo() {
+      localStorage.setItem(`toeic_memo_${current}`, memo.value);
+    }
+
+    function saveTranscript() {
+      localStorage.setItem(`toeic_transcript_${current}`, transcript.value);
+    }
+
+    function renderProgress() {
+      const done = Object.values(completed).filter(Boolean).length;
+      progressText.textContent = `${done} / ${testQuestions.length} 완료`;
+      progressBar.style.width = `${(done / testQuestions.length) * 100}%`;
+    }
+
+    function resetAudioOnly() {
+      if (audioUrl) {
+        URL.revokeObjectURL(audioUrl);
+        audioUrl = null;
+      }
+
+      chunks = [];
+      audio.removeAttribute("src");
+      audio.load();
+
+      downloadLink.classList.remove("show");
+      downloadLink.removeAttribute("href");
+    }
+
+    function renderAction() {
+      primaryAction.disabled = false;
+      primaryAction.className = "primaryAction";
+
+      if (state === "ready") {
+        primaryAction.textContent = "준비 시작";
+      }
+
+      if (state === "prepRunning") {
+        primaryAction.textContent = "준비 중";
+        primaryAction.disabled = true;
+      }
+
+      if (state === "prepDone") {
+        primaryAction.textContent = "답변 시작";
+        primaryAction.classList.add("answer");
+      }
+
+      if (state === "answerRunning") {
+        primaryAction.textContent = "답변 중";
+        primaryAction.classList.add("answer");
+        primaryAction.disabled = true;
+      }
+
+      if (state === "answerDone") {
+        primaryAction.textContent = "채점 보기";
+        primaryAction.classList.add("done");
+      }
+
+      if (state === "scored") {
+        primaryAction.textContent = "다음 문항";
+        primaryAction.classList.add("done");
+      }
+    }
+
+    function render() {
+      stopTimer();
+      stopRecording(false);
+
+      const item = q();
+
+      questionCounter.textContent = `Question ${current + 1} / ${testQuestions.length}`;
+      questionTitle.textContent = item.title;
+      questionFocus.textContent = `${item.type} · 준비 ${item.prep}초 · 답변 ${item.answer}초 · ${item.focus}`;
+      questionType.textContent = item.type;
+      promptText.textContent = item.prompt;
+
+      if (item.scene) {
+        sceneBox.classList.add("show");
+        sceneBox.innerHTML = item.scene.map(line => `• ${line}`).join("<br>");
+      } else {
+        sceneBox.classList.remove("show");
+        sceneBox.innerHTML = "";
+      }
+
+      memo.value = localStorage.getItem(`toeic_memo_${current}`) || "";
+      transcript.value = localStorage.getItem(`toeic_transcript_${current}`) || "";
+      finalTranscript = transcript.value;
+
+      timerLabel.textContent = "대기";
+      timer.textContent = "00";
+      timer.className = "timer";
+
+      state = "ready";
+      setRecordStatus("대기 중");
+
+      resultBox.classList.remove("show");
+      reviewArea.open = false;
+
+      resetAudioOnly();
+      renderProgress();
+      renderAction();
+    }
+
+    function startCountdown(seconds, mode, onDone) {
+      stopTimer();
+
+      let left = seconds;
+
+      timer.textContent = formatTime(left);
+      timerLabel.textContent = mode === "answer" ? "Answer Time" : "Preparation Time";
+      timer.className = "timer " + (mode === "answer" ? "answer" : "prep");
+
+      timerId = setInterval(() => {
+        left -= 1;
+        timer.textContent = formatTime(left);
+
+        if (left <= 0) {
+          stopTimer();
+          timerLabel.textContent = "완료";
+          timer.className = "timer done";
+          onDone();
+        }
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+    }
+
+    function startPrep() {
+      state = "prepRunning";
+      renderAction();
+
+      startCountdown(q().prep, "prep", () => {
+        state = "prepDone";
+        setRecordStatus("준비 완료 · 답변 시작을 누르세요");
+        renderAction();
+      });
+    }
+
+    function setupRecognition() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+      if (!SpeechRecognition) return null;
+
+      const rec = new SpeechRecognition();
+
+      rec.lang = "en-US";
+      rec.continuous = true;
+      rec.interimResults = true;
+
+      rec.onresult = event => {
+        let interim = "";
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const text = event.results[i][0].transcript;
+
+          if (event.results[i].isFinal) {
+            finalTranscript += text + " ";
+          } else {
+            interim += text;
+          }
+        }
+
+        transcript.value = (finalTranscript + interim).trim();
+        saveTranscript();
+      };
+
+      rec.onerror = () => {
+        setRecordStatus("음성인식 오류 · 답변 기록에서 직접 입력 가능");
+      };
+
+      return rec;
+    }
+
+    async function startRecording(resetTranscript = true) {
+      try {
+        if (mediaRecorder && mediaRecorder.state !== "inactive") {
+          stopRecording(false);
+        }
+
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        currentStream = stream;
+
+        chunks = [];
+        recordStartTime = Date.now();
+
+        if (resetTranscript) {
+          finalTranscript = "";
+          transcript.value = "";
+          saveTranscript();
+        }
+
+        mediaRecorder = new MediaRecorder(stream);
+
+        mediaRecorder.ondataavailable = event => {
+          if (event.data.size > 0) chunks.push(event.data);
+        };
+
+        mediaRecorder.onstop = () => {
+          recordDuration = Math.round((Date.now() - recordStartTime) / 1000);
+
+          const blob = new Blob(chunks, { type: "audio/webm" });
+
+          if (audioUrl) {
+            URL.revokeObjectURL(audioUrl);
+          }
+
+          audioUrl = URL.createObjectURL(blob);
+          audio.src = audioUrl;
+          audio.load();
+
+          downloadLink.href = audioUrl;
+          downloadLink.download = `toeic-speaking-question-${current + 1}.webm`;
+          downloadLink.classList.add("show");
+
+          if (currentStream) {
+            currentStream.getTracks().forEach(track => track.stop());
+            currentStream = null;
+          }
+        };
+
+        mediaRecorder.start();
+
+        recognition = setupRecognition();
+
+        if (recognition) {
+          recognition.start();
+          setRecordStatus("녹음 및 음성인식 중", true);
+        } else {
+          setRecordStatus("녹음 중 · 이 브라우저는 음성인식 미지원", true);
+        }
+
+        return true;
+      } catch (error) {
+        alert("마이크 권한을 허용해 주세요. Chrome 또는 Edge에서 localhost로 실행하는 것을 권장합니다.");
+        return false;
+      }
+    }
+
+    function stopRecording(updateStatus = true) {
+      if (mediaRecorder && mediaRecorder.state !== "inactive") {
+        mediaRecorder.stop();
+      }
+
+      if (recognition) {
+        try {
+          recognition.stop();
+        } catch (error) {}
+      }
+
+      if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+        currentStream = null;
+      }
+
+      if (updateStatus) {
+        setRecordStatus("답변 완료 · 채점 보기를 누르세요");
+      }
+    }
+
+    async function startAnswer() {
+      const started = await startRecording(true);
+
+      if (!started) return;
+
+      state = "answerRunning";
+      resultBox.classList.remove("show");
+      reviewArea.open = false;
+      renderAction();
+
+      startCountdown(q().answer, "answer", () => {
+        stopRecording(true);
+
+        completed[current] = true;
+        localStorage.setItem("toeic_completed", JSON.stringify(completed));
+
+        state = "answerDone";
+        renderProgress();
+        renderAction();
+
+        reviewArea.open = true;
+      });
+    }
+
+    function getWords(text) {
+      return text.toLowerCase().match(/[a-zA-Z']+/g) || [];
+    }
+
+    function countPhrases(text, phrases) {
+      const lower = text.toLowerCase();
+      return phrases.filter(p => lower.includes(p)).length;
+    }
+
+    function clamp(num, min, max) {
+      return Math.max(min, Math.min(max, num));
+    }
+
+    function scoreLength(wordCount, answerSeconds) {
+      let min = 10;
+      let ideal = 25;
+
+      if (answerSeconds <= 15) {
+        min = 8;
+        ideal = 22;
+      } else if (answerSeconds <= 30) {
+        min = 18;
+        ideal = 45;
+      } else if (answerSeconds <= 45) {
+        min = 30;
+        ideal = 65;
+      } else {
+        min = 45;
+        ideal = 95;
+      }
+
+      if (wordCount < min) {
+        return Math.round((wordCount / min) * 40);
+      }
+
+      if (wordCount <= ideal * 1.5) {
+        return 40;
+      }
+
+      return 32;
+    }
+
+    function scoreFluency(words, duration) {
+      if (!duration || duration < 3) return 24;
+
+      const wpm = words.length / duration * 60;
+
+      let paceScore = 0;
+
+      if (wpm >= 90 && wpm <= 155) paceScore = 25;
+      else if (wpm >= 70 && wpm < 90) paceScore = 20;
+      else if (wpm > 155 && wpm <= 185) paceScore = 20;
+      else paceScore = 14;
+
+      const fillerWords = ["um", "uh", "er", "like"];
+      const fillerCount = words.filter(w => fillerWords.includes(w)).length;
+      const fillerScore = fillerCount <= 2 ? 15 : fillerCount <= 5 ? 10 : 6;
+
+      return clamp(paceScore + fillerScore, 0, 40);
+    }
+
+    function analyzeAnswer() {
+      const item = q();
+      const text = transcript.value.trim();
+
+      if (!text) {
+        alert("음성인식 답변이 비어 있습니다. 답변 기록을 직접 입력한 뒤 채점할 수 있습니다.");
+        reviewArea.open = true;
+        return;
+      }
+
+      saveTranscript();
+
+      const lower = text.toLowerCase();
+      const words = getWords(text);
+      const wordCount = words.length;
+
+      const connectors = [
+        "because", "so", "therefore", "for example", "for instance",
+        "first", "second", "also", "however", "in addition", "as a result",
+        "overall", "that is why"
+      ];
+
+      const keywordHits = item.keywords.filter(k => lower.includes(k.toLowerCase())).length;
+      const connectorHits = countPhrases(lower, connectors);
+      const sentenceCount = text.split(/[.!?]+/).filter(s => s.trim().length > 3).length;
+
+      const relevanceScore = Math.round(clamp(keywordHits / item.keywordTarget, 0, 1) * 40);
+      const lengthScore = scoreLength(wordCount, item.answer);
+      const fluencyScore = scoreFluency(words, recordDuration);
+
+      let structureScore = 0;
+
+      if (sentenceCount >= 1) structureScore += 10;
+      if (sentenceCount >= 2) structureScore += 8;
+      if (connectorHits >= 1) structureScore += 10;
+      if (connectorHits >= 2) structureScore += 6;
+
+      if (
+        lower.includes("because") ||
+        lower.includes("for example") ||
+        lower.includes("for instance")
+      ) {
+        structureScore += 6;
+      }
+
+      structureScore = clamp(structureScore, 0, 40);
+
+      let completionScore = 0;
+
+      if (wordCount >= 8) completionScore += 12;
+      if (wordCount >= 20) completionScore += 10;
+      if (keywordHits >= 2) completionScore += 8;
+      if (item.answer >= 45 && wordCount >= 40) completionScore += 10;
+      if (item.answer < 45 && wordCount >= 15) completionScore += 10;
+
+      completionScore = clamp(completionScore, 0, 40);
+
+      const total = relevanceScore + lengthScore + fluencyScore + structureScore + completionScore;
+
+      let level = "";
+
+      if (total >= 180) level = "상급: 답변 완성도와 전달력이 매우 좋습니다.";
+      else if (total >= 150) level = "중상급: 실전 답변으로 안정적입니다.";
+      else if (total >= 120) level = "중급: 구조와 구체성을 조금 더 보완하세요.";
+      else if (total >= 90) level = "초중급: 답변 길이와 핵심 정보가 부족합니다.";
+      else level = "기초: 짧은 완성 문장부터 안정적으로 만드는 연습이 필요합니다.";
+
+      const scoreItems = [
+        ["관련성", relevanceScore],
+        ["길이", lengthScore],
+        ["유창성", fluencyScore],
+        ["구조", structureScore],
+        ["완성도", completionScore]
+      ];
+
+      breakdown.innerHTML = scoreItems.map(([name, value]) => `
+        <div class="scoreRow">
+          <div>${name}</div>
+          <div class="miniBar">
+            <span style="width:${value / 40 * 100}%"></span>
+          </div>
+          <div>${value}/40</div>
+        </div>
+      `).join("");
+
+      const feedback = [];
+
+      if (wordCount < 15) {
+        feedback.push("답변이 짧습니다. 최소 2~3문장으로 확장하세요.");
+      }
+
+      if (keywordHits < Math.ceil(item.keywordTarget / 2)) {
+        feedback.push("질문과 직접 연결되는 핵심어가 부족합니다.");
+      }
+
+      if (connectorHits === 0) {
+        feedback.push("because, for example, also 같은 연결어를 사용해 보세요.");
+      }
+
+      if (sentenceCount < 2 && item.answer >= 30) {
+        feedback.push("의견 → 이유 → 예시 순서로 말하면 구조가 좋아집니다.");
+      }
+
+      if (
+        item.type.includes("Question 10") &&
+        !lower.includes("suggest") &&
+        !lower.includes("recommend") &&
+        !lower.includes("should")
+      ) {
+        feedback.push("해결책 문항에서는 I suggest, I recommend, You should 같은 표현을 쓰면 좋습니다.");
+      }
+
+      if (
+        item.type.includes("Question 11") &&
+        !lower.includes("prefer") &&
+        !lower.includes("think")
+      ) {
+        feedback.push("의견 문항에서는 I prefer 또는 I think로 입장을 먼저 말하세요.");
+      }
+
+      if (recordDuration && wordCount > 0) {
+        const wpm = Math.round(wordCount / recordDuration * 60);
+
+        if (wpm < 80) feedback.push(`말하기 속도가 느린 편입니다. 현재 약 ${wpm} WPM입니다.`);
+        if (wpm > 170) feedback.push(`말하기 속도가 빠른 편입니다. 현재 약 ${wpm} WPM입니다.`);
+      }
+
+      if (feedback.length === 0) {
+        feedback.push("전체적으로 균형 잡힌 답변입니다. 발음과 억양을 더 다듬어 보세요.");
+      }
+
+      totalScore.textContent = `${total} / 200`;
+      levelText.textContent = level;
+      feedbackList.innerHTML = feedback.map(item => `<li>${item}</li>`).join("");
+
+      resultBox.classList.add("show");
+      reviewArea.open = true;
+
+      state = "scored";
+      renderAction();
+
+      window.scrollTo({
+        top: resultBox.offsetTop - 16,
+        behavior: "smooth"
+      });
+    }
+
+    function nextQuestion() {
+      saveMemo();
+      saveTranscript();
+
+      current = (current + 1) % testQuestions.length;
+      render();
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }
+
+    function resetSet() {
+      const ok = confirm("새 랜덤 세트를 생성할까요? 기존 진행 상태와 메모는 초기화됩니다.");
+
+      if (!ok) return;
+
+      stopTimer();
+      stopRecording(false);
+
+      testQuestions = generateRandomTest();
+      current = 0;
+      completed = {};
+
+      localStorage.removeItem("toeic_completed");
+
+      Object.keys(localStorage).forEach(key => {
+        if (
+          key.startsWith("toeic_memo_") ||
+          key.startsWith("toeic_transcript_")
+        ) {
+          localStorage.removeItem(key);
+        }
+      });
+
+      render();
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }
+
+    primaryAction.onclick = () => {
+      if (state === "ready") {
+        startPrep();
+        return;
+      }
+
+      if (state === "prepDone") {
+        startAnswer();
+        return;
+      }
+
+      if (state === "answerDone") {
+        analyzeAnswer();
+        return;
+      }
+
+      if (state === "scored") {
+        nextQuestion();
+      }
+    };
+
+    nextBtn.onclick = nextQuestion;
+    newSetBtn.onclick = resetSet;
+
+    memo.addEventListener("input", saveMemo);
+    transcript.addEventListener("input", saveTranscript);
+
+    render();
+  </script>
+</body>
+</html>
