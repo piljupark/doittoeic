@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>DO IT TOEIC</title>
+  <title>TOEIC Speaking Practice</title>
 
   <style>
     * {
@@ -546,8 +546,8 @@
   <div class="page">
     <header class="examHeader">
       <div>
-        <div class="brand">DO IT TOEIC</div>
-        <div class="brandSub">TOEIC Speaking Practice</div>
+        <div class="brand">TOEIC Speaking Practice</div>
+        <div class="brandSub">비공식 실전 연습 모드</div>
       </div>
 
       <div class="headerRight">
@@ -647,6 +647,8 @@
     let finalTranscript = "";
     let recordStartTime = null;
     let recordDuration = 0;
+    let recordingMimeType = "";
+    let recordingExtension = "webm";
 
     const $ = id => document.getElementById(id);
 
@@ -870,6 +872,58 @@
       return rec;
     }
 
+    function getBestRecordingFormat() {
+      const candidates = [
+        {
+          mime: "audio/mp4;codecs=mp4a.40.2",
+          ext: "m4a"
+        },
+        {
+          mime: "audio/mp4",
+          ext: "m4a"
+        },
+        {
+          mime: "audio/aac",
+          ext: "aac"
+        },
+        {
+          mime: "audio/webm;codecs=opus",
+          ext: "webm"
+        },
+        {
+          mime: "audio/webm",
+          ext: "webm"
+        },
+        {
+          mime: "audio/ogg;codecs=opus",
+          ext: "ogg"
+        }
+      ];
+
+      if (!window.MediaRecorder || !MediaRecorder.isTypeSupported) {
+        return {
+          mime: "",
+          ext: "webm"
+        };
+      }
+
+      return candidates.find(item => MediaRecorder.isTypeSupported(item.mime)) || {
+        mime: "",
+        ext: "webm"
+      };
+    }
+
+    function getExtensionFromMimeType(mimeType) {
+      if (!mimeType) return recordingExtension;
+
+      if (mimeType.includes("mp4")) return "m4a";
+      if (mimeType.includes("aac")) return "aac";
+      if (mimeType.includes("ogg")) return "ogg";
+      if (mimeType.includes("webm")) return "webm";
+
+      return recordingExtension;
+    }
+
     async function startRecording(resetTranscript = true) {
       try {
         if (mediaRecorder && mediaRecorder.state !== "inactive") {
@@ -888,7 +942,16 @@
           saveTranscript();
         }
 
-        mediaRecorder = new MediaRecorder(stream);
+        const format = getBestRecordingFormat();
+
+        recordingMimeType = format.mime;
+        recordingExtension = format.ext;
+
+        const recorderOptions = recordingMimeType
+          ? { mimeType: recordingMimeType }
+          : {};
+
+        mediaRecorder = new MediaRecorder(stream, recorderOptions);
 
         mediaRecorder.ondataavailable = event => {
           if (event.data.size > 0) chunks.push(event.data);
@@ -897,7 +960,16 @@
         mediaRecorder.onstop = () => {
           recordDuration = Math.round((Date.now() - recordStartTime) / 1000);
 
-          const blob = new Blob(chunks, { type: "audio/webm" });
+          const finalMimeType =
+            mediaRecorder.mimeType ||
+            recordingMimeType ||
+            "audio/webm";
+
+          const finalExtension = getExtensionFromMimeType(finalMimeType);
+
+          const blob = new Blob(chunks, {
+            type: finalMimeType
+          });
 
           if (audioUrl) {
             URL.revokeObjectURL(audioUrl);
@@ -908,7 +980,7 @@
           audio.load();
 
           downloadLink.href = audioUrl;
-          downloadLink.download = `toeic-speaking-question-${current + 1}.webm`;
+          downloadLink.download = `toeic-speaking-question-${current + 1}.${finalExtension}`;
           downloadLink.classList.add("show");
 
           if (currentStream) {
