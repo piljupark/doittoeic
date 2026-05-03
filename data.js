@@ -1,3 +1,14 @@
+function freeImage(keywords, lock) {
+  return `https://loremflickr.com/640/400/${keywords}/all?lock=${lock}`;
+}
+
+function randomChoice(array) {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
+function randomLock(base = 1000) {
+  return base + Math.floor(Math.random() * 9000);
+}
 
 const questionBank = {
   readAloud: [
@@ -132,6 +143,13 @@ const questionBank = {
       focus: "장소 · 인물 · 행동 묘사",
       keywordTarget: 5,
       keywords: ["office", "meeting", "people", "table", "laptop", "presentation", "screen", "talking"],
+      imageKeywords: [
+        "office,meeting,people",
+        "business,meeting,laptop",
+        "conference,room,presentation",
+        "coworkers,office,discussion"
+      ],
+      imageAlt: "People are having a meeting in an office.",
       scene: [
         "장소: 회의실",
         "인물: 테이블 주변에 앉은 직원들",
@@ -147,6 +165,12 @@ const questionBank = {
       answer: 30,
       focus: "장소 · 인물 · 행동 묘사",
       keywordTarget: 5,
+      imageKeywords: [
+        "office,meeting,people",
+        "business,meeting,laptop",
+        "conference,room,presentation",
+        "coworkers,office,discussion"
+      ],
       keywords: ["park", "people", "walking", "bench", "trees", "dog", "sunny", "relaxing"],
       scene: [
         "장소: 공원",
@@ -162,6 +186,12 @@ const questionBank = {
       prep: 45,
       answer: 30,
       focus: "장소 · 인물 · 행동 묘사",
+      imageKeywords: [
+        "office,meeting,people",
+        "business,meeting,laptop",
+        "conference,room,presentation",
+        "coworkers,office,discussion"
+      ],
       keywordTarget: 5,
       keywords: ["restaurant", "waiter", "customers", "table", "menu", "food", "ordering", "busy"],
       scene: [
@@ -178,6 +208,12 @@ const questionBank = {
       prep: 45,
       answer: 30,
       focus: "장소 · 인물 · 행동 묘사",
+      imageKeywords: [
+        "office,meeting,people",
+        "business,meeting,laptop",
+        "conference,room,presentation",
+        "coworkers,office,discussion"
+      ],
       keywordTarget: 5,
       keywords: ["airport", "passengers", "luggage", "counter", "line", "waiting", "travel", "staff"],
       scene: [
@@ -194,6 +230,12 @@ const questionBank = {
       prep: 45,
       answer: 30,
       focus: "장소 · 인물 · 행동 묘사",
+      imageKeywords: [
+        "office,meeting,people",
+        "business,meeting,laptop",
+        "conference,room,presentation",
+        "coworkers,office,discussion"
+      ],
       keywordTarget: 5,
       keywords: ["market", "vendor", "fruit", "customers", "buying", "stand", "vegetables", "busy"],
       scene: [
@@ -210,6 +252,12 @@ const questionBank = {
       prep: 45,
       answer: 30,
       focus: "장소 · 인물 · 행동 묘사",
+      imageKeywords: [
+        "office,meeting,people",
+        "business,meeting,laptop",
+        "conference,room,presentation",
+        "coworkers,office,discussion"
+      ],
       keywordTarget: 5,
       keywords: ["classroom", "teacher", "students", "desk", "board", "writing", "studying", "books"],
       scene: [
@@ -226,6 +274,12 @@ const questionBank = {
       prep: 45,
       answer: 30,
       focus: "장소 · 인물 · 행동 묘사",
+      imageKeywords: [
+        "restaurant,customers,waiter",
+        "cafe,people,menu",
+        "dining,table,restaurant",
+        "waiter,taking,order"
+      ],
       keywordTarget: 5,
       keywords: ["store", "customer", "clothes", "shopping", "shelf", "employee", "holding", "looking"],
       scene: [
@@ -242,6 +296,12 @@ const questionBank = {
       prep: 45,
       answer: 30,
       focus: "장소 · 인물 · 행동 묘사",
+      imageKeywords: [
+        "airport,passengers,luggage",
+        "airport,checkin,counter",
+        "travelers,suitcases,airport",
+        "people,waiting,airport"
+      ],
       keywordTarget: 5,
       keywords: ["kitchen", "chef", "cooking", "vegetables", "pan", "restaurant", "food", "preparing"],
       scene: [
@@ -744,7 +804,14 @@ Hi, this is Jason from human resources. The printed materials for tomorrow's emp
 };
 
 function cloneQuestion(question) {
-  return JSON.parse(JSON.stringify(question));
+  const cloned = JSON.parse(JSON.stringify(question));
+
+  if (cloned.imageKeywords && cloned.imageKeywords.length > 0) {
+    const selectedKeywords = randomChoice(cloned.imageKeywords);
+    cloned.imageUrl = freeImage(selectedKeywords, randomLock());
+  }
+
+  return cloned;
 }
 
 function shuffle(array) {

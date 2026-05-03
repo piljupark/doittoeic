@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>TOEIC Speaking Practice</title>
+  <title>Do it TOEIC</title>
 
   <style>
     * {
@@ -240,6 +240,36 @@
     .sceneBox.show {
       display: block;
     }
+
+    .pictureBox {
+        display: none;
+        margin: 0 0 18px;
+        padding: 14px;
+        border-radius: 16px;
+        border: 1px solid #dbe3ef;
+        background: #f8fafc;
+      }
+
+      .pictureBox.show {
+        display: block;
+      }
+
+      .pictureBox img {
+        display: block;
+        width: 100%;
+        max-height: 460px;
+        object-fit: contain;
+        border-radius: 12px;
+        background: #e2e8f0;
+        object-fit: cover;
+      }
+
+      .pictureCaption {
+        margin-top: 8px;
+        font-size: 12px;
+        color: #64748b;
+        text-align: right;
+      }
 
     .promptText {
       min-height: 210px;
@@ -546,8 +576,8 @@
   <div class="page">
     <header class="examHeader">
       <div>
-        <div class="brand">TOEIC Speaking Practice</div>
-        <div class="brandSub">비공식 실전 연습 모드</div>
+        <div class="brand">DO IT TOEIC</div>
+        <div class="brandSub">TOEIC Speaking Practice</div>
       </div>
 
       <div class="headerRight">
@@ -583,6 +613,17 @@
 
         <div class="promptArea">
           <div class="promptLabel" id="questionType">Prompt</div>
+        
+          <figure class="pictureBox" id="pictureBox">
+            <img 
+              id="pictureImage" 
+              alt="TOEIC Speaking Part 2 practice image"
+              loading="eager"
+              decoding="async"
+            />
+            <figcaption id="pictureCaption" class="pictureCaption"></figcaption>
+          </figure>
+        
           <div class="sceneBox" id="sceneBox"></div>
           <div class="promptText" id="promptText"></div>
         </div>
@@ -663,6 +704,9 @@
     const recordStatus = $("recordStatus");
     const sceneBox = $("sceneBox");
     const promptText = $("promptText");
+    const pictureBox = $("pictureBox");
+    const pictureImage = $("pictureImage");
+    const pictureCaption = $("pictureCaption");
 
     const primaryAction = $("primaryAction");
     const nextBtn = $("nextBtn");
@@ -679,6 +723,8 @@
     const levelText = $("levelText");
     const breakdown = $("breakdown");
     const feedbackList = $("feedbackList");
+
+    
 
     function q() {
       return testQuestions[current];
@@ -770,12 +816,23 @@
       questionType.textContent = item.type;
       promptText.textContent = item.prompt;
 
-      if (item.scene) {
+      if (item.scene && !item.imageUrl) {
         sceneBox.classList.add("show");
         sceneBox.innerHTML = item.scene.map(line => `• ${line}`).join("<br>");
       } else {
         sceneBox.classList.remove("show");
         sceneBox.innerHTML = "";
+      }
+
+      if (item.imageUrl) {
+        pictureBox.classList.add("show");
+        pictureImage.src = item.imageUrl;
+        pictureImage.alt = item.imageAlt || "Describe the picture.";
+      } else {
+        pictureBox.classList.remove("show");
+        pictureImage.removeAttribute("src");
+        pictureImage.alt = "";
+        pictureCaption.textContent = "";
       }
 
       memo.value = localStorage.getItem(`toeic_memo_${current}`) || "";
@@ -795,6 +852,20 @@
       resetAudioOnly();
       renderProgress();
       renderAction();
+      preloadNextImage();
+    }
+
+    function preloadNextImage() {
+      for (let i = 1; i < testQuestions.length; i++) {
+        const nextIndex = (current + i) % testQuestions.length;
+        const nextItem = testQuestions[nextIndex];
+
+        if (nextItem.imageUrl) {
+          const img = new Image();
+          img.src = nextItem.imageUrl;
+          break;
+        }
+      }
     }
 
     function startCountdown(seconds, mode, onDone) {
